@@ -117,6 +117,34 @@ def crs_res_bounds(profile):
 
 
 
+def profile_to_geometry(
+        profile,
+        delta=None,
+        as_geometry=True,
+        as_feat=False,
+        as_fc=False,
+        as_gdf=False,
+        return_profile_data=True):
+    crs,res,bounds=crs_res_bounds(profile)
+    geom=bounds_geometry(
+        bounds,
+        crs=crs,
+        delta=delta,
+        as_gdf=True)
+    geom=geom.to_crs(get_crs(4326))
+    if as_geometry or as_feat or as_fc:
+        geom=geojson.loads(geom.geometry.to_json())
+    if as_geometry or as_feat:
+        geom=geom['features']
+    if as_geometry:
+        geom=geom[0]['geometry']
+    if return_profile_data:
+        return geom, (crs, res, bounds)
+    else:
+        return geom
+
+
+
 
 #
 # UTILS
