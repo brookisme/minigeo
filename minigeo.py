@@ -132,12 +132,12 @@ def profile_to_geometry(
         delta=delta,
         as_gdf=True)
     geom=geom.to_crs(get_crs(4326))
-    if as_geometry or as_feat or as_fc:
+    if not as_gdf:
         geom=geojson.loads(geom.geometry.to_json())
-    if as_geometry or as_feat:
-        geom=geom['features']
-    if as_geometry:
-        geom=geom[0]['geometry']
+        if not as_fc:
+            geom=geom['features'][0]
+            if not as_feat:
+                geom=geom[0]['geometry']
     if return_profile_data:
         return geom, (crs, res, bounds)
     else:
