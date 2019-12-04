@@ -137,7 +137,7 @@ def profile_to_geometry(
         if not as_fc:
             geom=geom['features'][0]
             if not as_feat:
-                geom=geom[0]['geometry']
+                geom=geom['geometry']
     if return_profile_data:
         return geom, (crs, res, bounds)
     else:
