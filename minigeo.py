@@ -1,6 +1,7 @@
 import json
 import geojson
 import geopandas as gpd
+from affine import Affine
 from rasterio.crs import CRS
 import requests as req
 #
