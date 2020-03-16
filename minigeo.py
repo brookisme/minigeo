@@ -155,5 +155,70 @@ def gdf_to_geojson(gdf,crs=None):
     return geojson.loads(gdf.geometry.to_json())
 
 
+def point_feat(lon,lat,properties={},as_fc=True,as_gdf=False):
+    geom={
+        "type": "Feature",
+        "properties": properties,
+        "geometry": {
+            "type": "Point",
+            "coordinates": [lon,lat]
+        }
+    }
+    if as_fc or as_gdf:
+        geom={'features':[geom],'type':'FeatureCollection'}
+        geom=geojson.loads(json.dumps(geom))
+    if as_gdf:
+        geom=gpd.GeoDataFrame.from_features(geom,crs=get_crs(4326))
+    return geom
+
+
+def buffer_box(point=None,x=None,y=None,size=None,pixel_size=None,resolution=None,delta=0):
+    if point:
+        x=point.x
+        y=point.y
+    if not size:
+        size=resolution*pixel_size
+    minx=round(x-size/2+delta)
+    maxx=minx+size
+    miny=round(y+size/2-delta)
+    maxy=miny+size
+    return minx,miny,maxx,maxy
+
+
+def build_affine(resolution,xmin=None,ymin=None,bounds=None):
+    if not xmin:
+      xmin=bounds[0]
+    if not ymin:
+      ymin=bounds[1]
+    return Affine(
+        resolution, 0, xmin,
+        0, -resolution, ymin)
+     
+
+def build_profile(
+        crs,
+        transform,
+        width=None,
+        height=None,
+        size=None,
+        count=1,
+        nodata=None,
+        dtype='uint8',
+        compress='lzw'):
+    """ construct profile """
+    if size:
+        width=height=size
+    return {
+        'crs': get_crs(crs),
+        'transform': transform,
+        'width': width,
+        'height': height,
+        'count': count,
+        'nodata': nodata,
+        'dtype': dtype,
+        'compress': compress,
+        'driver': 'GTiff',
+        'interleave': 'pixel' }
+
 
 
