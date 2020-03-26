@@ -186,6 +186,11 @@ def buffer_box(point=None,x=None,y=None,size=None,pixel_size=None,resolution=Non
     return minx,miny,maxx,maxy
 
 
+def gdaltrans_to_affine(gdal_trans):
+    c, a, b, f, d, e=gdal_trans
+    return Affine(a, b, c, d, e, f)
+
+
 def build_affine(resolution,xmin=None,ymin=None,bounds=None):
     if not xmin:
       xmin=bounds[0]
