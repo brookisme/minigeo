@@ -8,6 +8,8 @@ import requests as req
 # CONSTANTS
 #
 REQ_TMPL='https://nominatim.openstreetmap.org/search?q={}&format=json'
+GTIFF_DRIVER='GTiff'
+PNG_DRIVER='PNG'
 
 
 
@@ -209,12 +211,18 @@ def build_profile(
         size=None,
         count=1,
         nodata=None,
+        driver=GTIFF_DRIVER,
+        is_png=False,
         dtype='uint8',
-        compress='lzw'):
+        compress='lzw',
+        interleave='pixel',
+        tiled=False):
     """ construct profile """
+    if is_png:
+        driver=PNG_DRIVER
     if size:
         width=height=size
-    return {
+    profile={
         'crs': get_crs(crs),
         'transform': transform,
         'width': width,
@@ -222,9 +230,13 @@ def build_profile(
         'count': count,
         'nodata': nodata,
         'dtype': dtype,
-        'compress': compress,
-        'driver': 'GTiff',
-        'interleave': 'pixel' }
-
+        'driver': driver }
+    if driver==GTIFF_DRIVER:
+        profile.update({
+            'compress': lzw,
+            'interleave': interleave,
+            'tiled': tiled
+        })
+    return profile
 
 
