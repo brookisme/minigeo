@@ -233,7 +233,7 @@ def build_profile(
         'driver': driver }
     if driver==GTIFF_DRIVER:
         profile.update({
-            'compress': lzw,
+            'compress': compress,
             'interleave': interleave,
             'tiled': tiled
         })
